@@ -7,22 +7,30 @@
 # include <pthread.h>
 # include <sys/time.h>
 
+
 # define TOO_FEW 6
 # define TOO_MANY 7
 
 
+typedef struct s_info
+{
+    pthread_mutex_t *mutex;
+    pthread_mutex_t mutex_status;
+	int				status;
+	int				nbr_philo;
+	long int		time_to_die;
+	long int		time_to_eat;
+	long int		time_to_sleep;
+	int				must_eat;
+
+}	t_info;
+
 typedef struct s_philo
 {
-	int			*forks;
-	int			*status;
-	int			nbr_philo;
-	long int	time_to_die;
-	long int	time_to_eat;
-	long int	time_to_sleep;
-	int			must_eat;
-    pthread_mutex_t mutex;
+	struct s_info	*philo;
+	int				index_ph;
+} t_philo;
 
-}	t_philo;
 
 int	ft_atoi(const char *nptr);
 pthread_t	*threading(t_philo *philo);

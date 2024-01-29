@@ -41,23 +41,16 @@ static int	error_check(int ac, char **av)
 
 static t_philo	*philo_init(int ac, char **av, t_philo *philo)
 {
-	int	i;
-
 	if (!error_check(ac, av))
 		return (NULL);
 	philo = (t_philo *)malloc(sizeof(t_philo));
 	if (!philo)
 		return (NULL);
 	philo->nbr_philo = ft_atoi(av[1]);
-	philo->forks = (int *)malloc(sizeof(int) * philo->nbr_philo);
-	if (!philo->forks)
+	philo->mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * philo->nbr_philo);
+	if (!philo->mutex)
 		return (NULL);
-	i = 0;
-	while (i < philo->nbr_philo)
-	{
-		philo->forks[i] = 0;
-		i++;
-	}
+	philo->status = 0;
 	philo->time_to_die = ft_atoi(av[2]);
 	philo->time_to_eat = ft_atoi(av[3]);
 	philo->time_to_sleep = ft_atoi(av[4]);
