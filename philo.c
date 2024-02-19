@@ -39,41 +39,51 @@ static int	error_check(int ac, char **av)
 
 
 
-static t_philo	*philo_init(int ac, char **av, t_philo *philo)
+static t_info	*philo_init(int ac, char **av, t_info *dlist)
 {
 	if (!error_check(ac, av))
 		return (NULL);
-	philo = (t_philo *)malloc(sizeof(t_philo));
-	if (!philo)
+	dlist = (t_info *)malloc(sizeof(t_info));
+	if (!dlist)
 		return (NULL);
-	philo->nbr_philo = ft_atoi(av[1]);
-	philo->mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * philo->nbr_philo);
-	if (!philo->mutex)
-		return (NULL);
-	philo->status = 0;
-	philo->time_to_die = ft_atoi(av[2]);
-	philo->time_to_eat = ft_atoi(av[3]);
-	philo->time_to_sleep = ft_atoi(av[4]);
+	dlist->nbr_philo = ft_atoi(av[1]);
+	dlist->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * dlist->nbr_philo);
+	if (!dlist->forks)
+		return (free (dlist), NULL);
+	dlist->status = 0;
+	dlist->time_to_die = ft_atoi(av[2]);
+	dlist->time_to_eat = ft_atoi(av[3]);
+	dlist->time_to_sleep = ft_atoi(av[4]);
 	if (ac == 6)
-		philo->must_eat = ft_atoi(av[5]);
+		dlist->must_eat = ft_atoi(av[5]);
 	else
-		philo->must_eat = 0;
-	return (philo);
+		dlist->must_eat = 0;
+	return (dlist);
 }
 
 int main(int ac, char **av)
 {
-	t_philo		*philo;
+	t_info		*dlist;
 	pthread_t	*thread;
 
 
-	philo = philo_init(ac, av, philo);
-	if (!philo)
+	dlist = philo_init(ac, av, dlist);
+	if (!dlist)
 		return (0);
-	thread = threading(philo);
+	thread = threading(dlist);
 	if (!thread)
-		return (0);
-	sleep (1);
+		return (struct_free(dlist), 0);
+
+	pthread_mutex_lock(&dlist->mutex_status);
+	while (dlist->status % 10 == 0 && dlist->status != dlist->nbr_philo * 10)
+	{
+		pthread_mutex_unlock(&dlist->mutex_status);
+		usleep(100);
+		pthread_mutex_lock(&dlist->mutex_status);
+	}
+	pthread_mutex_unlock(&dlist->mutex_status);
+	usleep(500);
+
 	free(thread);
-	struct_free(philo);
+	struct_free(dlist);
 }

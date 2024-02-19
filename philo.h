@@ -14,7 +14,7 @@
 
 typedef struct s_info
 {
-    pthread_mutex_t *mutex;
+    pthread_mutex_t *forks;
     pthread_mutex_t mutex_status;
 	int				status;
 	int				nbr_philo;
@@ -27,15 +27,21 @@ typedef struct s_info
 
 typedef struct s_philo
 {
-	struct s_info	*philo;
+	struct s_info	*dlist;
 	int				index_ph;
+    pthread_mutex_t mutext_last_ate;
+	long int		last_ate;
 } t_philo;
 
 
 int	ft_atoi(const char *nptr);
-pthread_t	*threading(t_philo *philo);
+pthread_t	*threading(t_info *philo);
 void	*philo_action(void *arg);
 void	struct_free(t_philo *philo);
+long int	current_time(void);
+void	ft_msleep(long int usec);
+
+
 
 
 
