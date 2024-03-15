@@ -50,14 +50,13 @@ static t_info	*philo_init(int ac, char **av, t_info *dlist)
 	dlist->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * dlist->nbr_philo);
 	if (!dlist->forks)
 		return (free (dlist), NULL);
-	dlist->status = 0;
 	dlist->time_to_die = ft_atoi(av[2]);
 	dlist->time_to_eat = ft_atoi(av[3]);
 	dlist->time_to_sleep = ft_atoi(av[4]);
 	if (ac == 6)
 		dlist->must_eat = ft_atoi(av[5]);
 	else
-		dlist->must_eat = 0;
+		dlist->must_eat = -1;
 	return (dlist);
 }
 
@@ -66,24 +65,22 @@ int main(int ac, char **av)
 	t_info		*dlist;
 	pthread_t	*thread;
 
-
 	dlist = philo_init(ac, av, dlist);
 	if (!dlist)
 		return (0);
 	thread = threading(dlist);
 	if (!thread)
-		return (struct_free(dlist), 0);
+		return (/*struct_free(dlist),*/ 0);
 
-	pthread_mutex_lock(&dlist->mutex_status);
-	while (dlist->status % 10 == 0 && dlist->status != dlist->nbr_philo * 10)
-	{
-		pthread_mutex_unlock(&dlist->mutex_status);
-		usleep(100);
-		pthread_mutex_lock(&dlist->mutex_status);
-	}
-	pthread_mutex_unlock(&dlist->mutex_status);
-	usleep(500);
-
+	// pthread_mutex_lock(&dlist->mutex_status);
+	// while (dlist->status % 10 == 0 && dlist->status != dlist->nbr_philo * 10)
+	// {
+	// 	pthread_mutex_unlock(&dlist->mutex_status);
+	// 	usleep(100);
+	// 	pthread_mutex_lock(&dlist->mutex_status);
+	// }
+	// pthread_mutex_unlock(&dlist->mutex_status);
+	// HERE COMES THE ENDING SCENARIO
 	free(thread);
-	struct_free(dlist);
+	// struct_free(dlist);
 }
