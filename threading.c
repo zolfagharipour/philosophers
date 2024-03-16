@@ -24,17 +24,18 @@ static void	thread_join(t_info *dlist, t_philo *philo, pthread_t *thread, pthrea
 	{
 		philo[i].dlist = dlist;
 		philo[i].index_ph = i;
+		philo[i].finished = 0;
 		pthread_create(&thread[i], NULL, philo_action, &philo[i]);
 		i++;
 	}
 	pthread_create(&super, NULL, supervisor, philo);
 	pthread_join(super, NULL);
 	i = 0;
-	// while (i < dlist->nbr_philo)
-	// {
-	// 	pthread_join(thread[i], NULL);
-	// 	i++;
-	// }
+	while (i < dlist->nbr_philo)
+	{
+		pthread_join(thread[i], NULL);
+		i++;
+	}
 }
 
 pthread_t	*threading(t_info *dlist)
@@ -52,6 +53,6 @@ pthread_t	*threading(t_info *dlist)
 	mutex_init(dlist, dlist->nbr_philo);
 
 	dlist->start_time = current_time();
-	thread_join(dlist, philo, thread, supervisor);
+	thread_join(dlist, philo, thread, super);
 	return (thread);
 }

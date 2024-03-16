@@ -13,7 +13,7 @@ void	ft_msleep(long int msec)
 	long int	start;
 
 	start = current_time();
-	while (current_time() - start <= msec)
+	while (current_time() - start <= msec -1)
 		usleep(100);
 }
 

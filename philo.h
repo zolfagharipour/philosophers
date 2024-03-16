@@ -8,6 +8,8 @@
 # include <sys/time.h>
 
 
+# define ALIVE -1
+# define FINISHED -2
 # define TOO_FEW 6
 # define TOO_MANY 7
 
@@ -22,6 +24,7 @@ typedef struct s_info
 	long int		time_to_eat;
 	long int		time_to_sleep;
 	int				must_eat;
+	int				dead;
 	long int		start_time;
 }	t_info;
 
@@ -30,6 +33,7 @@ typedef struct s_philo
 	struct s_info	*dlist;
 	int				index_ph;
 	long int		last_ate;
+	long int		finished;
     // pthread_mutex_t mutext_last_ate;
 } t_philo;
 

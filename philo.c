@@ -3,19 +3,19 @@
 static int	error_print(int	i)
 {
 	if (i == 1)
-		write(2, "Number of philosophers is not correct.", 39);
+		write(2, "Number of philosophers is not correct.\n", 40);
 	else if (i == 2)
-		write(2, "Time to die is not correct.", 28);
+		write(2, "Time to die is not correct.\n", 29);
 	else if (i == 3)
-		write(2, "Time to eat is not correct.", 28);
+		write(2, "Time to eat is not correct.\n", 29);
 	else if (i == 4)
-		write(2, "Time to sleep is not correct.", 30);
+		write(2, "Time to sleep is not correct.\n", 31);
 	else if (i == 5)
-		write(2, "number of times each philosopher must eat is not correct.", 58);
+		write(2, "number of times each philosopher must eat is not correct.\n", 59);
 	else if (i == TOO_FEW)
-		write(2, "Too few arguments.", 19);
+		write(2, "Too few arguments.\n", 20);
 	else if (i == TOO_MANY)
-		write(2, "Too many arguments.", 20);
+		write(2, "Too many arguments.\n", 21);
 	return (0);
 }
 
@@ -57,6 +57,7 @@ static t_info	*philo_init(int ac, char **av, t_info *dlist)
 		dlist->must_eat = ft_atoi(av[5]);
 	else
 		dlist->must_eat = -1;
+	dlist->dead = 0;
 	return (dlist);
 }
 
