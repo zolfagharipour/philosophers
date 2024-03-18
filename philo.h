@@ -17,8 +17,7 @@
 typedef struct s_info
 {
     pthread_mutex_t *forks;
-    // pthread_mutex_t mutex_status;
-	// int				status;
+    pthread_mutex_t m_dead;
 	int				nbr_philo;
 	long int		time_to_die;
 	long int		time_to_eat;
@@ -30,11 +29,11 @@ typedef struct s_info
 
 typedef struct s_philo
 {
+    pthread_mutex_t m_ph;
 	struct s_info	*dlist;
 	int				index_ph;
 	long int		last_ate;
 	long int		finished;
-    // pthread_mutex_t mutext_last_ate;
 } t_philo;
 
 
@@ -45,11 +44,6 @@ void	*supervisor(void *arg);
 void	struct_free(t_philo *philo);
 long int	current_time(void);
 void	ft_msleep(long int usec);
-
-
-
-
-
 
 
 #endif
