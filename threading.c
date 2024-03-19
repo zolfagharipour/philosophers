@@ -37,6 +37,16 @@ static void	thread_join(t_info *dlist, t_philo *philo, pthread_t *thread, pthrea
 		pthread_join(thread[i], NULL);
 		i++;
 	}
+	i = 0;
+	while (i < dlist->nbr_philo)
+	{
+		pthread_mutex_destroy(&philo[i].m_ph);
+		pthread_mutex_destroy(&dlist->forks[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&dlist->m_dead);
+
+
 }
 
 pthread_t	*threading(t_info *dlist)

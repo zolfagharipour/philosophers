@@ -13,10 +13,11 @@ static int	check_philo(t_philo *philo)
 		if (current_time() - philo[i].last_ate > philo->dlist->time_to_die
 			&& !philo[i].finished)
 		{
-			pthread_mutex_unlock(&philo[i].m_ph);
+	printf("{%ld}\n", current_time() - philo[i].last_ate);
 			pthread_mutex_lock(&philo[i].dlist->m_dead);
 			philo->dlist->dead = 1;
 			pthread_mutex_unlock(&philo[i].dlist->m_dead);
+			pthread_mutex_unlock(&philo[i].m_ph);
 			return (i);
 		}
 		if (philo[i].finished)
