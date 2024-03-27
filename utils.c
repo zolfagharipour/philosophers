@@ -15,6 +15,7 @@ void	ft_msleep(long int msec)
 	start = current_time();
 	while (current_time() - start <= msec -1)
 		usleep(100);
+	// check if someone is dead
 }
 
 void	struct_free(t_philo *philo)
