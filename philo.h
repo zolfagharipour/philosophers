@@ -18,6 +18,7 @@ typedef struct s_info
 {
     pthread_mutex_t *forks;
     pthread_mutex_t m_dead;
+    pthread_mutex_t ph_write;
 	int				nbr_philo;
 	long int		time_to_die;
 	long int		time_to_eat;

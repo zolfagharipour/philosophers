@@ -14,6 +14,31 @@ static void	define_forks(t_philo *philo, int *dominant, int *passive)
 	}
 }
 
+static void	philo_write(t_philo *philo, char *print)
+{
+	pthread_mutex_lock(&philo->dlist->m_dead);
+	if (!philo->dlist->dead)
+	{
+		pthread_mutex_unlock(&philo->dlist->m_dead);
+		pthread_mutex_lock(&philo->dlist->ph_write);
+		printf ("%ld\t%d\t%s\n", current_time() - philo->dlist->start_time, philo->index_ph, print);
+		pthread_mutex_unlock(&philo->dlist->ph_write);
+	}
+	else
+		pthread_mutex_unlock(&philo->dlist->m_dead);
+}
+
+static int is_dead(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->dlist->m_dead);
+	if (!philo->dlist->dead)
+	{
+		pthread_mutex_unlock(&philo->dlist->m_dead);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->dlist->m_dead);
+	return (0);
+}
 
 static void	philo_do(t_philo *philo)
 {
@@ -23,41 +48,30 @@ static void	philo_do(t_philo *philo)
 
 	times_ate = 0;
 	define_forks(philo, &dominant_fork, &passive_fork);
-	while (times_ate != philo->dlist->must_eat && !philo->dlist->dead)
+	if ((philo->index_ph + 2) % 2 == 1)
+	{
+			ft_msleep(philo->dlist->time_to_eat);
+	}
+	while (times_ate != philo->dlist->must_eat && is_dead(philo))
 	{
 		pthread_mutex_lock(&philo->dlist->forks[dominant_fork]);
-		pthread_mutex_lock(&philo->dlist->m_dead);
-		if (!philo->dlist->dead)
-			printf ("\x1b[%dm%ld %d has taken a fork.D %d\n\x1b[0m", philo->index_ph+32, current_time() - philo->dlist->start_time, philo->index_ph, dominant_fork);
-		pthread_mutex_unlock(&philo->dlist->m_dead);
+		philo_write(philo, "has taken a fork.D");
 		pthread_mutex_lock(&philo->dlist->forks[passive_fork]);
-		pthread_mutex_lock(&philo->dlist->m_dead);
-		if (!philo->dlist->dead)
-			printf ("\x1b[%dm%ld %d has taken a fork.P %d\n\x1b[0m", philo->index_ph+32, current_time() - philo->dlist->start_time, philo->index_ph, passive_fork);
-		pthread_mutex_unlock(&philo->dlist->m_dead);
+		philo_write(philo, "has taken a fork.P");
 		pthread_mutex_lock(&philo->m_ph);
 		philo->last_ate = current_time();
 		pthread_mutex_unlock(&philo->m_ph);
-		pthread_mutex_lock(&philo->dlist->m_dead);
-		if (!philo->dlist->dead)
-			printf ("\x1b[%dm%ld %d is eating.\n\x1b[0m", philo->index_ph+32, philo->last_ate - philo->dlist->start_time, philo->index_ph);
-		pthread_mutex_unlock(&philo->dlist->m_dead);
+		philo_write(philo, "is eating");
 		ft_msleep(philo->dlist->time_to_eat);
 		times_ate++;
 		pthread_mutex_unlock(&philo->dlist->forks[dominant_fork]);
 		pthread_mutex_unlock(&philo->dlist->forks[passive_fork]);
-		pthread_mutex_lock(&philo->dlist->m_dead);
-		if (times_ate != philo->dlist->must_eat && !philo->dlist->dead)
+		if (times_ate != philo->dlist->must_eat)
 		{
-			printf ("\x1b[%dm%ld %d is sleeping.\n\x1b[0m", philo->index_ph+32, current_time()- philo->dlist->start_time, philo->index_ph);
+			philo_write(philo, "is sleeping");
 			ft_msleep(philo->dlist->time_to_sleep);
 		}
-		pthread_mutex_lock(&philo->dlist->m_dead);
-		if (!philo->dlist->dead)
-			printf ("\x1b[%dm%ld %d is thinking.\x1b[0m\n", philo->index_ph +32, current_time() - philo->dlist->start_time, philo->index_ph);
-		pthread_mutex_unlock(&philo->dlist->m_dead);
-		// pthread_mutex_unlock(&philo->dlist->m_dead);
-		// usleep(100);
+		philo_write(philo, "is thinking");
 	}
 	pthread_mutex_lock(&philo->m_ph);
 	philo->finished = 1;

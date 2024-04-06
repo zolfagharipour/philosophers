@@ -73,15 +73,6 @@ int main(int ac, char **av)
 	if (!thread)
 		return (/*struct_free(dlist),*/ 0);
 
-	// pthread_mutex_lock(&dlist->mutex_status);
-	// while (dlist->status % 10 == 0 && dlist->status != dlist->nbr_philo * 10)
-	// {
-	// 	pthread_mutex_unlock(&dlist->mutex_status);
-	// 	usleep(100);
-	// 	pthread_mutex_lock(&dlist->mutex_status);
-	// }
-	// pthread_mutex_unlock(&dlist->mutex_status);
-	// HERE COMES THE ENDING SCENARIO
 	free(thread);
 	// struct_free(dlist);
 }

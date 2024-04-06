@@ -7,6 +7,7 @@ static void	mutex_init(t_info *dlist, int nbr_forks)
 
 	i = 0;
 	pthread_mutex_init(&dlist->m_dead, NULL);
+	pthread_mutex_init(&dlist->ph_write, NULL);
 	while (i < nbr_forks)
 	{
 		pthread_mutex_init(&dlist->forks[i], NULL);

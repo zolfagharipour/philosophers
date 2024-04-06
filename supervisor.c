@@ -13,7 +13,6 @@ static int	check_philo(t_philo *philo)
 		if (current_time() - philo[i].last_ate > philo->dlist->time_to_die
 			&& !philo[i].finished)
 		{
-	printf("{%ld}\n", current_time() - philo[i].last_ate);
 			pthread_mutex_lock(&philo[i].dlist->m_dead);
 			philo->dlist->dead = 1;
 			pthread_mutex_unlock(&philo[i].dlist->m_dead);
@@ -43,6 +42,11 @@ int a = 31;
 		check = check_philo(philo);
 	}
 	if (check > ALIVE)
+	{
+		pthread_mutex_lock(&philo->dlist->ph_write);
 		printf ("\x1b[%dm%ld %d is dead.\x1b[0m\n", a, current_time() - philo[0].dlist->start_time,	check);
+		pthread_mutex_unlock(&philo->dlist->ph_write);
+
+	}
 	return (NULL);
 }
