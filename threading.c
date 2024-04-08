@@ -61,10 +61,11 @@ pthread_t	*threading(t_info *dlist)
 		return (0);
 	thread = (pthread_t *)malloc(sizeof(pthread_t) * dlist->nbr_philo);
 	if (!thread)
-		return (/*free(philo),*/ 0);
+		return (free(philo), NULL);
 	mutex_init(dlist, dlist->nbr_philo);
 
 	dlist->start_time = current_time();
 	thread_join(dlist, philo, thread, super);
+	free(philo);
 	return (thread);
 }

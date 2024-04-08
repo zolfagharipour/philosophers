@@ -61,6 +61,28 @@ static t_info	*philo_init(int ac, char **av, t_info *dlist)
 	return (dlist);
 }
 
+void philo_destroy(t_philo philo)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	pthread_mutex_destroy(&philo.m_ph);
+	while (i < philo.dlist->nbr_philo)
+	{
+		j = 0;
+		pthread_mutex_destroy(&philo.dlist[i].m_dead);
+		pthread_mutex_destroy(&philo.dlist[i].ph_write);
+		while (j < philo.dlist->nbr_philo)
+		{
+			pthread_mutex_destroy(&philo.dlist[i].forks[j]);
+			j++;
+		}
+		i++;
+	}
+	free(philo.dlist);
+}
+
 int main(int ac, char **av)
 {
 	t_info		*dlist;
@@ -74,5 +96,7 @@ int main(int ac, char **av)
 		return (/*struct_free(dlist),*/ 0);
 
 	free(thread);
+	free(dlist->forks);
+	free(dlist);
 	// struct_free(dlist);
 }

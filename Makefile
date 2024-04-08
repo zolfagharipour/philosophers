@@ -10,7 +10,7 @@ BONUS_OBJS = ${BONUS:.c=.o}
 
 
 CC = cc
-CFLAGS = -g -pthread -fsanitize=thread
+CFLAGS = -g -pthread #-fsanitize=thread
 RM	=	rm -rf
 
 all: ${NAME}

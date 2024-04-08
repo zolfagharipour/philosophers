@@ -7,6 +7,7 @@ static int	check_philo(t_philo *philo)
 
 	i = 0;
 	finished = 0;
+	usleep(100);
 	while (i < philo->dlist->nbr_philo)
 	{
 		pthread_mutex_lock(&philo[i].m_ph);
@@ -19,6 +20,9 @@ static int	check_philo(t_philo *philo)
 			pthread_mutex_unlock(&philo[i].m_ph);
 			return (i);
 		}
+		else
+			pthread_mutex_unlock(&philo[i].m_ph);
+		pthread_mutex_lock(&philo[i].m_ph);
 		if (philo[i].finished)
 			finished++;
 		pthread_mutex_unlock(&philo[i].m_ph);
