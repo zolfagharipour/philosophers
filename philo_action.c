@@ -50,7 +50,7 @@ static void	philo_do(t_philo *philo)
 	define_forks(philo, &dominant_fork, &passive_fork);
 	if ((philo->index_ph + 2) % 2 == 1)
 	{
-			ft_msleep(philo->dlist->time_to_eat);
+			ft_msleep(philo->dlist->time_to_eat * 0.9);
 	}
 	while (times_ate != philo->dlist->must_eat && is_dead(philo))
 	{
