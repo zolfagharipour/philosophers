@@ -42,9 +42,10 @@ int	ft_atoi(const char *nptr);
 pthread_t	*threading(t_info *philo);
 void	*philo_action(void *arg);
 void	*supervisor(void *arg);
-void	struct_free(t_philo *philo);
 long int	current_time(void);
-void	ft_msleep(long int usec);
+void	ft_msleep(long int usec, t_philo *philo);
+int is_dead(t_philo *philo);
+
 
 
 #endif

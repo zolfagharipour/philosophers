@@ -7,7 +7,7 @@ static int	check_philo(t_philo *philo)
 
 	i = 0;
 	finished = 0;
-	usleep(100);
+	usleep(50 * philo->dlist->nbr_philo);
 	while (i < philo->dlist->nbr_philo)
 	{
 		pthread_mutex_lock(&philo[i].m_ph);
@@ -38,7 +38,7 @@ void	*supervisor(void *arg)
 {
 	t_philo *philo;
 	int		check;
-int a = 31;
+
 	philo = (t_philo *)arg;
 	check = ALIVE;
 	while (check == ALIVE)
@@ -48,7 +48,7 @@ int a = 31;
 	if (check > ALIVE)
 	{
 		pthread_mutex_lock(&philo->dlist->ph_write);
-		printf ("\x1b[%dm%ld %d is dead.\x1b[0m\n", a, current_time() - philo[0].dlist->start_time,	check);
+		printf ("\x1b[31m%ld %d is dead.\x1b[0m\n", current_time() - philo[0].dlist->start_time, check);
 		pthread_mutex_unlock(&philo->dlist->ph_write);
 
 	}
