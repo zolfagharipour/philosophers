@@ -28,6 +28,45 @@ static void	philo_write(t_philo *philo, char *print)
 		pthread_mutex_unlock(&philo->dlist->m_dead);
 }
 
+void	philo_think(t_philo *philo)
+{
+	
+	philo_write(philo, "is thinking");
+	pthread_mutex_lock(&philo->m_ph);
+	if (philo->dlist->nbr_philo % 2 == 1)
+	{
+		if (philo->dlist->time_to_die - (philo->last_ate - current_time()) > philo->dlist->time_to_eat + 10)
+		{
+			pthread_mutex_unlock(&philo->m_ph);
+			ft_msleep(philo->dlist->time_to_eat, philo);
+		}
+		else 
+			pthread_mutex_unlock(&philo->m_ph);
+	}
+	else
+		pthread_mutex_unlock(&philo->m_ph);
+}
+
+static void philo_eat(t_philo *philo, int dominant_fork, int passive_fork)
+{
+	pthread_mutex_lock(&philo->dlist->forks[dominant_fork]);
+	philo_write(philo, "has taken a fork.D");
+	if (dominant_fork == passive_fork)
+	{
+		pthread_mutex_unlock(&philo->dlist->forks[dominant_fork]);
+		return ;
+	}
+	pthread_mutex_lock(&philo->dlist->forks[passive_fork]);
+	philo_write(philo, "has taken a fork.P");
+	pthread_mutex_lock(&philo->m_ph);
+	philo->last_ate = current_time();
+	pthread_mutex_unlock(&philo->m_ph);
+	philo_write(philo, "is eating");
+	ft_msleep(philo->dlist->time_to_eat, philo);
+	pthread_mutex_unlock(&philo->dlist->forks[dominant_fork]);
+	pthread_mutex_unlock(&philo->dlist->forks[passive_fork]);
+}
+
 static void	philo_do(t_philo *philo)
 {
 	int	dominant_fork;
@@ -40,24 +79,9 @@ static void	philo_do(t_philo *philo)
 			ft_msleep(philo->dlist->time_to_eat * 0.9, philo);
 	while (times_ate != philo->dlist->must_eat && is_dead(philo))
 	{
-		philo_write(philo, "is thinking");
-		pthread_mutex_lock(&philo->dlist->forks[dominant_fork]);
-		philo_write(philo, "has taken a fork.D");
-		if (dominant_fork == passive_fork)
-		{
-			pthread_mutex_unlock(&philo->dlist->forks[dominant_fork]);
-			return ;
-		}
-		pthread_mutex_lock(&philo->dlist->forks[passive_fork]);
-		philo_write(philo, "has taken a fork.P");
-		pthread_mutex_lock(&philo->m_ph);
-		philo->last_ate = current_time();
-		pthread_mutex_unlock(&philo->m_ph);
-		philo_write(philo, "is eating");
-		ft_msleep(philo->dlist->time_to_eat, philo);
+		philo_think(philo);
+		philo_eat(philo, dominant_fork, passive_fork);
 		times_ate++;
-		pthread_mutex_unlock(&philo->dlist->forks[dominant_fork]);
-		pthread_mutex_unlock(&philo->dlist->forks[passive_fork]);
 		if (times_ate != philo->dlist->must_eat)
 		{
 			philo_write(philo, "is sleeping");
