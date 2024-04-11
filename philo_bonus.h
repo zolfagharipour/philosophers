@@ -6,7 +6,8 @@
 # include <stdio.h>
 # include <pthread.h>
 # include <sys/time.h>
-
+# include <semaphore.h>
+# include <fcntl.h>
 
 # define ALIVE -1
 # define FINISHED -2
@@ -16,9 +17,12 @@
 
 typedef struct s_info
 {
-    pthread_mutex_t *forks;
-    pthread_mutex_t m_dead;
-    pthread_mutex_t ph_write;
+    // pthread_mutex_t *forks;
+    // pthread_mutex_t m_dead;
+    // pthread_mutex_t ph_write;
+	sem_t			*forks;
+	sem_t			*s_dead;
+	sem_t			*ph_write;
 	int				nbr_philo;
 	long int		time_to_die;
 	long int		time_to_eat;
@@ -30,7 +34,8 @@ typedef struct s_info
 
 typedef struct s_philo
 {
-    pthread_mutex_t m_ph;
+    // pthread_mutex_t m_ph;
+	sem_t			*s_ph;
 	struct s_info	*dlist;
 	int				index_ph;
 	long int		last_ate;

@@ -1,4 +1,4 @@
-#include "philo.h"
+#include "philo_bonus.h"
 
 long int	current_time(void)
 {
@@ -9,13 +9,16 @@ long int	current_time(void)
 }
 int is_dead(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->dlist->m_dead);
+	// pthread_mutex_lock(&philo->dlist->m_dead);
+	sem_wait(philo->dlist->s_dead);
 	if (!philo->dlist->dead)
 	{
-		pthread_mutex_unlock(&philo->dlist->m_dead);
+		// pthread_mutex_unlock(&philo->dlist->m_dead);
+		sem_post(philo->dlist->s_dead);
 		return (1);
 	}
-	pthread_mutex_unlock(&philo->dlist->m_dead);
+	// pthread_mutex_unlock(&philo->dlist->m_dead);
+	sem_wait(philo->dlist->s_dead);
 	return (0);
 }
 

@@ -1,19 +1,4 @@
-#include "philo.h"
-
-
-static void	mutex_init(t_info *dlist, int nbr_forks)
-{
-	int	i;
-
-	i = 0;
-	pthread_mutex_init(&dlist->m_dead, NULL);
-	pthread_mutex_init(&dlist->ph_write, NULL);
-	while (i < nbr_forks)
-	{
-		pthread_mutex_init(&dlist->forks[i], NULL);
-		i++;
-	}
-}
+#include "philo_bonus.h"
 
 static int	thread_create(t_info *dlist, t_philo *philo, pthread_t *thread, pthread_t *super)
 {
@@ -26,7 +11,15 @@ static int	thread_create(t_info *dlist, t_philo *philo, pthread_t *thread, pthre
 		philo[i].dlist = dlist;
 		philo[i].index_ph = i;
 		philo[i].finished = 0;
-		pthread_mutex_init(&philo[i].m_ph, NULL);
+		// pthread_mutex_init(&philo[i].m_ph, NULL);
+		sem_unlink("/s_ph");
+		philo[i].s_ph = sem_open("/s_ph", O_CREAT | O_EXCL, 0644, 1);
+		if (philo->s_ph == SEM_FAILED) {
+        perror("sem_open");
+        free(philo);
+        exit(EXIT_FAILURE);
+    }
+
 		if (pthread_create(&thread[i], NULL, philo_action, &philo[i]))
 			return (i);
 		i++;
@@ -55,22 +48,22 @@ static void	thread_join(t_info *dlist, pthread_t *thread, pthread_t *super, int 
 	}
 }
 
-static void	philo_destroy(t_info *dlist, t_philo *philo, int i)
-{
-	int	j;
+// static void	philo_destroy(t_info *dlist, t_philo *philo, int i)
+// {
+// 	int	j;
 
-	j = 0;
-	if (i < 0 || i == dlist->nbr_philo + 1)
-		i = dlist->nbr_philo;
-	while (j < i)
-	{
-		pthread_mutex_destroy(&philo[j].m_ph);
-		pthread_mutex_destroy(&dlist->forks[j]);
-		j++;
-	}
-	pthread_mutex_destroy(&dlist->m_dead);
-	pthread_mutex_destroy(&dlist->ph_write);
-}
+// 	j = 0;
+// 	if (i < 0 || i == dlist->nbr_philo + 1)
+// 		i = dlist->nbr_philo;
+// 	while (j < i)
+// 	{
+// 		pthread_mutex_destroy(&philo[j].m_ph);
+// 		pthread_mutex_destroy(&dlist->forks[j]);
+// 		j++;
+// 	}
+// 	pthread_mutex_destroy(&dlist->m_dead);
+// 	pthread_mutex_destroy(&dlist->ph_write);
+// }
 
 
 
@@ -87,12 +80,11 @@ pthread_t	*threading(t_info *dlist)
 	thread = (pthread_t *)malloc(sizeof(pthread_t) * dlist->nbr_philo);
 	if (!thread)
 		return (free(philo), NULL);
-	mutex_init(dlist, dlist->nbr_philo);
 
 	dlist->start_time = current_time();
 	i = thread_create(dlist, philo, thread, &super);
 	thread_join(dlist, thread, &super, i);
-	philo_destroy(dlist, philo, i);
+	// philo_destroy(dlist, philo, i);
 	free(philo);
 	return (thread);
 }

@@ -1,4 +1,4 @@
-#include "philo.h"
+#include "philo_bonus.h"
 
 static int	error_print(int	i)
 {
@@ -47,7 +47,12 @@ static t_info	*philo_init(int ac, char **av, t_info *dlist)
 	if (!dlist)
 		return (NULL);
 	dlist->nbr_philo = ft_atoi(av[1]);
-	dlist->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * dlist->nbr_philo);
+	sem_unlink("forks");
+	sem_unlink("s_dead");
+	sem_unlink("ph_write");
+	dlist->forks = sem_open("forks", O_CREAT, 0644, dlist->nbr_philo);
+	dlist->s_dead = sem_open("s_dead", O_CREAT, 644, 1);
+	dlist->ph_write = sem_open("ph_write", O_CREAT, 644, 1);
 	if (!dlist->forks)
 		return (free (dlist), NULL);
 	dlist->time_to_die = ft_atoi(av[2]);
@@ -61,27 +66,27 @@ static t_info	*philo_init(int ac, char **av, t_info *dlist)
 	return (dlist);
 }
 
-void philo_destroy(t_philo philo)
-{
-	int	i;
-	int	j;
+// void philo_destroy(t_philo philo)
+// {
+// 	int	i;
+// 	int	j;
 
-	i = 0;
-	pthread_mutex_destroy(&philo.m_ph);
-	while (i < philo.dlist->nbr_philo)
-	{
-		j = 0;
-		pthread_mutex_destroy(&philo.dlist[i].m_dead);
-		pthread_mutex_destroy(&philo.dlist[i].ph_write);
-		while (j < philo.dlist->nbr_philo)
-		{
-			pthread_mutex_destroy(&philo.dlist[i].forks[j]);
-			j++;
-		}
-		i++;
-	}
-	free(philo.dlist);
-}
+// 	i = 0;
+// 	pthread_mutex_destroy(&philo.m_ph);
+// 	while (i < philo.dlist->nbr_philo)
+// 	{
+// 		j = 0;
+// 		pthread_mutex_destroy(&philo.dlist[i].m_dead);
+// 		pthread_mutex_destroy(&philo.dlist[i].ph_write);
+// 		while (j < philo.dlist->nbr_philo)
+// 		{
+// 			pthread_mutex_destroy(&philo.dlist[i].forks[j]);
+// 			j++;
+// 		}
+// 		i++;
+// 	}
+// 	free(philo.dlist);
+// }
 
 int main(int ac, char **av)
 {
@@ -96,7 +101,6 @@ int main(int ac, char **av)
 		return (/*struct_free(dlist),*/ 0);
 
 	free(thread);
-	free(dlist->forks);
+	// free(dlist->forks);
 	free(dlist);
-	// struct_free(dlist);
 }
