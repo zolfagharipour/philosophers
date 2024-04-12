@@ -1,4 +1,33 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   supervisor.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/12 17:11:22 by mzolfagh          #+#    #+#             */
+/*   Updated: 2024/04/12 17:18:44 by mzolfagh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
+
+static int	if_dead(t_philo *philo, int i)
+{
+	pthread_mutex_lock(&philo[i].m_ph);
+	if (current_time() - philo[i].last_ate > philo->dlist->time_to_die - 1
+		&& !philo[i].finished)
+	{
+		pthread_mutex_lock(&philo[i].dlist->m_dead);
+		philo->dlist->dead = 1;
+		pthread_mutex_unlock(&philo[i].dlist->m_dead);
+		pthread_mutex_unlock(&philo[i].m_ph);
+		return (i);
+	}
+	else
+		pthread_mutex_unlock(&philo[i].m_ph);
+	return (ALIVE);
+}
 
 static int	check_philo(t_philo *philo)
 {
@@ -10,18 +39,8 @@ static int	check_philo(t_philo *philo)
 	usleep(50 * philo->dlist->nbr_philo);
 	while (i < philo->dlist->nbr_philo)
 	{
-		pthread_mutex_lock(&philo[i].m_ph);
-		if (current_time() - philo[i].last_ate > philo->dlist->time_to_die
-			&& !philo[i].finished)
-		{
-			pthread_mutex_lock(&philo[i].dlist->m_dead);
-			philo->dlist->dead = 1;
-			pthread_mutex_unlock(&philo[i].dlist->m_dead);
-			pthread_mutex_unlock(&philo[i].m_ph);
+		if (if_dead(philo, i) != ALIVE)
 			return (i);
-		}
-		else
-			pthread_mutex_unlock(&philo[i].m_ph);
 		pthread_mutex_lock(&philo[i].m_ph);
 		if (philo[i].finished)
 			finished++;
@@ -33,10 +52,9 @@ static int	check_philo(t_philo *philo)
 	return (ALIVE);
 }
 
-
 void	*supervisor(void *arg)
 {
-	t_philo *philo;
+	t_philo	*philo;
 	int		check;
 
 	philo = (t_philo *)arg;
@@ -48,9 +66,9 @@ void	*supervisor(void *arg)
 	if (check > ALIVE)
 	{
 		pthread_mutex_lock(&philo->dlist->ph_write);
-		printf ("\x1b[31m%ld %d is dead.\x1b[0m\n", current_time() - philo[0].dlist->start_time, check);
+		printf ("\x1b[31m%ld %d is dead.\x1b[0m\n",
+			current_time() - philo[0].dlist->start_time, check);
 		pthread_mutex_unlock(&philo->dlist->ph_write);
-
 	}
 	return (NULL);
 }
