@@ -1,35 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   threading_bonus.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/12 18:39:59 by mzolfagh          #+#    #+#             */
+/*   Updated: 2024/04/12 18:40:18 by mzolfagh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo_bonus.h"
 
-static int	thread_create(t_info *dlist, t_philo *philo, pthread_t *thread, pthread_t *super)
+static int	thread_create(t_info *dlist, t_philo *philo,
+	pthread_t *thread, pthread_t *super)
 {
 	int			i;
+	sem_t		*s;
 
 	i = 0;
-
+	sem_unlink("/s_ph");
+	s = sem_open("/s_ph", O_CREAT | O_EXCL, 0644, 1);
+	if (s == SEM_FAILED)
+		return (0);
 	while (i < dlist->nbr_philo)
 	{
 		philo[i].dlist = dlist;
 		philo[i].index_ph = i;
 		philo[i].finished = 0;
-		// pthread_mutex_init(&philo[i].m_ph, NULL);
-		sem_unlink("/s_ph");
-		philo[i].s_ph = sem_open("/s_ph", O_CREAT | O_EXCL, 0644, 1);
-		if (philo->s_ph == SEM_FAILED) {
-        perror("sem_open");
-        free(philo);
-        exit(EXIT_FAILURE);
-    }
-
+		philo[i].s_ph = s;
 		if (pthread_create(&thread[i], NULL, philo_action, &philo[i]))
-			return (i);
+			return (sem_close(s), sem_unlink("/s_ph"), i);
 		i++;
 	}
 	if (pthread_create(super, NULL, supervisor, philo))
+	{
+		sem_close(s);
+		sem_unlink("/s_ph");
 		return (dlist->nbr_philo + 1);
+	}
 	return (-1);
 }
 
-static void	thread_join(t_info *dlist, pthread_t *thread, pthread_t *super, int i)
+static void	thread_join(t_info *dlist, pthread_t *thread,
+	pthread_t *super, int i)
 {
 	int	j;
 
@@ -48,25 +62,6 @@ static void	thread_join(t_info *dlist, pthread_t *thread, pthread_t *super, int 
 	}
 }
 
-// static void	philo_destroy(t_info *dlist, t_philo *philo, int i)
-// {
-// 	int	j;
-
-// 	j = 0;
-// 	if (i < 0 || i == dlist->nbr_philo + 1)
-// 		i = dlist->nbr_philo;
-// 	while (j < i)
-// 	{
-// 		pthread_mutex_destroy(&philo[j].m_ph);
-// 		pthread_mutex_destroy(&dlist->forks[j]);
-// 		j++;
-// 	}
-// 	pthread_mutex_destroy(&dlist->m_dead);
-// 	pthread_mutex_destroy(&dlist->ph_write);
-// }
-
-
-
 pthread_t	*threading(t_info *dlist)
 {
 	t_philo		*philo;
@@ -80,11 +75,11 @@ pthread_t	*threading(t_info *dlist)
 	thread = (pthread_t *)malloc(sizeof(pthread_t) * dlist->nbr_philo);
 	if (!thread)
 		return (free(philo), NULL);
-
 	dlist->start_time = current_time();
 	i = thread_create(dlist, philo, thread, &super);
 	thread_join(dlist, thread, &super, i);
-	// philo_destroy(dlist, philo, i);
+	sem_close(philo->s_ph);
+	sem_unlink("/s_ph");
 	free(philo);
 	return (thread);
 }

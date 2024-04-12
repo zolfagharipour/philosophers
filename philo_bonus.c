@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/12 18:35:59 by mzolfagh          #+#    #+#             */
+/*   Updated: 2024/04/12 18:36:33 by mzolfagh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo_bonus.h"
 
-static int	error_print(int	i)
+static int	error_print(int i)
 {
 	if (i == 1)
 		write(2, "Number of philosophers is not correct.\n", 40);
@@ -11,7 +23,7 @@ static int	error_print(int	i)
 	else if (i == 4)
 		write(2, "Time to sleep is not correct.\n", 31);
 	else if (i == 5)
-		write(2, "number of times each philosopher must eat is not correct.\n", 59);
+		write(2, "number of times each philo must eat is not correct.\n", 59);
 	else if (i == TOO_FEW)
 		write(2, "Too few arguments.\n", 20);
 	else if (i == TOO_MANY)
@@ -37,7 +49,29 @@ static int	error_check(int ac, char **av)
 	return (1);
 }
 
-
+static int	semaphors_open(t_info *dlist)
+{
+	sem_unlink("forks");
+	sem_unlink("s_dead");
+	sem_unlink("ph_write");
+	dlist->forks = sem_open("forks", O_CREAT, 0644, dlist->nbr_philo);
+	if (dlist->forks == SEM_FAILED)
+		return (0);
+	dlist->s_dead = sem_open("s_dead", O_CREAT, 644, 1);
+	if (dlist->s_dead == SEM_FAILED)
+	{
+		sem_close(dlist->forks);
+		return (sem_unlink("forks"), 0);
+	}
+	dlist->ph_write = sem_open("ph_write", O_CREAT, 644, 1);
+	if (dlist->ph_write == SEM_FAILED)
+	{
+		sem_close(dlist->forks);
+		sem_close(dlist->s_dead);
+		return (sem_unlink("forks"), sem_unlink("s_dead"), 0);
+	}
+	return (1);
+}
 
 static t_info	*philo_init(int ac, char **av, t_info *dlist)
 {
@@ -47,14 +81,8 @@ static t_info	*philo_init(int ac, char **av, t_info *dlist)
 	if (!dlist)
 		return (NULL);
 	dlist->nbr_philo = ft_atoi(av[1]);
-	sem_unlink("forks");
-	sem_unlink("s_dead");
-	sem_unlink("ph_write");
-	dlist->forks = sem_open("forks", O_CREAT, 0644, dlist->nbr_philo);
-	dlist->s_dead = sem_open("s_dead", O_CREAT, 644, 1);
-	dlist->ph_write = sem_open("ph_write", O_CREAT, 644, 1);
-	if (!dlist->forks)
-		return (free (dlist), NULL);
+	if (!semaphors_open(dlist))
+		return (free(dlist), NULL);
 	dlist->time_to_die = ft_atoi(av[2]);
 	dlist->time_to_eat = ft_atoi(av[3]);
 	dlist->time_to_sleep = ft_atoi(av[4]);
@@ -66,29 +94,7 @@ static t_info	*philo_init(int ac, char **av, t_info *dlist)
 	return (dlist);
 }
 
-// void philo_destroy(t_philo philo)
-// {
-// 	int	i;
-// 	int	j;
-
-// 	i = 0;
-// 	pthread_mutex_destroy(&philo.m_ph);
-// 	while (i < philo.dlist->nbr_philo)
-// 	{
-// 		j = 0;
-// 		pthread_mutex_destroy(&philo.dlist[i].m_dead);
-// 		pthread_mutex_destroy(&philo.dlist[i].ph_write);
-// 		while (j < philo.dlist->nbr_philo)
-// 		{
-// 			pthread_mutex_destroy(&philo.dlist[i].forks[j]);
-// 			j++;
-// 		}
-// 		i++;
-// 	}
-// 	free(philo.dlist);
-// }
-
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_info		*dlist;
 	pthread_t	*thread;
@@ -97,10 +103,12 @@ int main(int ac, char **av)
 	if (!dlist)
 		return (0);
 	thread = threading(dlist);
-	if (!thread)
-		return (/*struct_free(dlist),*/ 0);
-
 	free(thread);
-	// free(dlist->forks);
+	sem_close(dlist->forks);
+	sem_close(dlist->s_dead);
+	sem_close(dlist->ph_write);
+	sem_unlink("forks");
+	sem_unlink("s_dead");
+	sem_unlink("ph_write");
 	free(dlist);
 }
