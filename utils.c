@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 17:03:03 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/12 17:24:55 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/12 19:41:22 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	philo_write(t_philo *philo, char *print)
 		pthread_mutex_unlock(&philo->dlist->m_dead);
 		pthread_mutex_lock(&philo->dlist->ph_write);
 		printf ("%ld\t%d\t%s\n", current_time() - philo->dlist->start_time,
-			philo->index_ph, print);
+			philo->index_ph + 1, print);
 		pthread_mutex_unlock(&philo->dlist->ph_write);
 	}
 	else

@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 17:08:50 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/12 17:24:44 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/12 19:47:28 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	philo_think(t_philo *philo)
 {
 	philo_write(philo, "is thinking");
 	pthread_mutex_lock(&philo->m_ph);
-	if (philo->dlist->nbr_philo % 2 == 1)
+	if (philo->dlist->nbr_philo % 2 == 1 && (philo->index_ph + 2) % 2 == 1)
 	{
 		if (philo->dlist->time_to_die - (philo->last_ate - current_time())
 			> philo->dlist->time_to_eat + 10)
@@ -75,7 +75,7 @@ static void	philo_do(t_philo *philo)
 	times_ate = 0;
 	define_forks(philo, &dominant_fork, &passive_fork);
 	if ((philo->index_ph + 2) % 2 == 1)
-		ft_msleep(philo->dlist->time_to_eat * 0.9, philo);
+		ft_msleep(philo->dlist->time_to_eat - 5, philo);
 	while (times_ate != philo->dlist->must_eat && is_dead(philo))
 	{
 		philo_think(philo);
