@@ -9,16 +9,13 @@ long int	current_time(void)
 }
 int is_dead(t_philo *philo)
 {
-	// pthread_mutex_lock(&philo->dlist->m_dead);
 	sem_wait(philo->dlist->s_dead);
 	if (!philo->dlist->dead)
 	{
-		// pthread_mutex_unlock(&philo->dlist->m_dead);
 		sem_post(philo->dlist->s_dead);
 		return (1);
 	}
-	// pthread_mutex_unlock(&philo->dlist->m_dead);
-	sem_wait(philo->dlist->s_dead);
+	sem_post(philo->dlist->s_dead);
 	return (0);
 }
 
@@ -27,7 +24,7 @@ void	ft_msleep(long int msec, t_philo *philo)
 	long int	start;
 
 	start = current_time();
-	while (current_time() - start <= msec -1)
+	while (current_time() - start <= msec - 1)
 	{
 		usleep(100);
 		if (!is_dead(philo))
