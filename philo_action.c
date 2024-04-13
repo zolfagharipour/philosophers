@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 17:08:50 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/12 19:47:28 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/13 17:21:33 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ void	philo_think(t_philo *philo)
 {
 	philo_write(philo, "is thinking");
 	pthread_mutex_lock(&philo->m_ph);
-	if (philo->dlist->nbr_philo % 2 == 1 && (philo->index_ph + 2) % 2 == 1)
+	if (philo->dlist->nbr_philo % 2 == 1)
 	{
-		if (philo->dlist->time_to_die - (philo->last_ate - current_time())
-			> philo->dlist->time_to_eat + 10)
+		if (philo->dlist->time_to_die - (current_time() - philo->last_ate)
+			> philo->dlist->time_to_eat)
 		{
 			pthread_mutex_unlock(&philo->m_ph);
 			ft_msleep(philo->dlist->time_to_eat, philo);
@@ -49,7 +49,7 @@ void	philo_think(t_philo *philo)
 static void	philo_eat(t_philo *philo, int dominant_fork, int passive_fork)
 {
 	pthread_mutex_lock(&philo->dlist->forks[dominant_fork]);
-	philo_write(philo, "has taken a fork.D");
+	philo_write(philo, "has taken a fork.");
 	if (dominant_fork == passive_fork)
 	{
 		pthread_mutex_unlock(&philo->dlist->forks[dominant_fork]);
@@ -57,7 +57,7 @@ static void	philo_eat(t_philo *philo, int dominant_fork, int passive_fork)
 		return ;
 	}
 	pthread_mutex_lock(&philo->dlist->forks[passive_fork]);
-	philo_write(philo, "has taken a fork.P");
+	philo_write(philo, "has taken a fork.");
 	pthread_mutex_lock(&philo->m_ph);
 	philo->last_ate = current_time();
 	pthread_mutex_unlock(&philo->m_ph);

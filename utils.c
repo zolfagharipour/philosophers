@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 17:03:03 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/12 19:41:22 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/13 17:15:48 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	ft_msleep(long int msec, t_philo *philo)
 	if (!start)
 		return ;
 	current = current_time();
-	while (current && current - start <= msec)
+	while (current && current - start <= msec - 1)
 	{
 		usleep(100);
 		if (!is_dead(philo))

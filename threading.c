@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 17:12:45 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/12 17:14:01 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/13 17:41:46 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,12 @@ static void	thread_join(t_info *dlist, pthread_t *thread,
 {
 	int	j;
 
+	if (i > 0)
+	{
+		pthread_mutex_lock(&dlist->m_dead);
+		dlist->dead = 1;
+		pthread_mutex_unlock(&dlist->m_dead);
+	}
 	if (i < 0)
 	{
 		i = dlist->nbr_philo;
