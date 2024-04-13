@@ -1,3 +1,0 @@
-2. protect mallocs
-4. error check for input
-6. write a check for odd nbr of philo
