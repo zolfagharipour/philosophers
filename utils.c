@@ -42,7 +42,7 @@ void	ft_msleep(long int msec, t_philo *philo)
 	if (!start)
 		return ;
 	current = current_time();
-	while (current && current - start <= msec -1)
+	while (current && current - start <= msec)
 	{
 		usleep(100);
 		if (!is_dead(philo))

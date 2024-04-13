@@ -25,7 +25,10 @@ static int	if_dead(t_philo *philo, int i)
 		return (i);
 	}
 	else
+	{
 		pthread_mutex_unlock(&philo[i].m_ph);
+		usleep(100);
+	}
 	return (ALIVE);
 }
 
@@ -67,7 +70,7 @@ void	*supervisor(void *arg)
 	{
 		pthread_mutex_lock(&philo->dlist->ph_write);
 		printf ("\x1b[31m%ld %d is dead.\x1b[0m\n",
-			current_time() - philo[0].dlist->start_time, check);
+			current_time() - philo[0].dlist->start_time, check + 1);
 		pthread_mutex_unlock(&philo->dlist->ph_write);
 	}
 	return (NULL);

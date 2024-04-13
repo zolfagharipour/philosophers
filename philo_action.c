@@ -53,6 +53,7 @@ static void	philo_eat(t_philo *philo, int dominant_fork, int passive_fork)
 	if (dominant_fork == passive_fork)
 	{
 		pthread_mutex_unlock(&philo->dlist->forks[dominant_fork]);
+		ft_msleep(philo->dlist->time_to_die + 10, philo);
 		return ;
 	}
 	pthread_mutex_lock(&philo->dlist->forks[passive_fork]);
