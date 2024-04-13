@@ -1,16 +1,19 @@
 
-NAME = philo
+NAME = philo_bonus
 
-SRCS =  $(wildcard *.c)
+SRCS =  ft_atoi.c \
+		philo_action_bonus.c \
+		threading_bonus.c \
+		philo_bonus.c \
+		supervisor_bonus.c \
+		utils_bonus.c
 
-BONUS = 
 
 OBJS = ${SRCS:.c=.o}
-BONUS_OBJS = ${BONUS:.c=.o}
 
 
 CC = cc
-CFLAGS = -g -pthread #-fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -g -pthread #-fsanitize=thread
 RM	=	rm -rf
 
 all: ${NAME}
