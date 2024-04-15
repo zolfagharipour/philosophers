@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 18:40:26 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/12 18:54:20 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/15 17:53:30 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,12 @@ long int	current_time(void)
 	return (tv_current.tv_usec / 1000 + tv_current.tv_sec * 1000);
 }
 
-int	is_dead(t_philo *philo)
-{
-	sem_wait(philo->dlist->s_dead);
-	if (!philo->dlist->dead)
-	{
-		sem_post(philo->dlist->s_dead);
-		return (1);
-	}
-	sem_post(philo->dlist->s_dead);
-	return (0);
-}
-
 void	ft_msleep(long int msec, t_philo *philo)
 {
 	long int	start;
 	long int	current;
 
+	(void) philo;
 	start = current_time();
 	if (!start)
 		return ;
@@ -45,8 +34,19 @@ void	ft_msleep(long int msec, t_philo *philo)
 	while (current && current - start <= msec - 1)
 	{
 		usleep(100);
-		if (!is_dead(philo))
-			return ;
 		current = current_time();
 	}
+}
+
+int	massacre_children(t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo->nbr_philo)
+	{
+		kill(philo->pid[i], SIGKILL);
+		i++;
+	}
+	return (0);
 }
