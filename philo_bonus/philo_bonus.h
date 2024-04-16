@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 18:38:28 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/15 17:54:12 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/16 16:58:01 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_philo
 	sem_t		*s_ph;
 	pid_t		pid[500];
 	int			index_ph;
+	int			finished;
 	long int	last_ate;
 	int			nbr_philo;
 	long int	time_to_die;

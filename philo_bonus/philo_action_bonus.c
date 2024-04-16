@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 18:24:00 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/15 18:07:01 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/16 17:38:38 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void	philo_action(t_philo *philo)
 {
 	pthread_t	mon;
 
+	// sem_wait(philo->s_dead);
 	sem_unlink("s_ph");
 	philo->s_ph = sem_open("s_ph", O_CREAT, 0644, 1);
 	if (philo->s_ph == SEM_FAILED)
@@ -89,6 +90,17 @@ void	philo_action(t_philo *philo)
 	philo->last_ate = current_time();
 	sem_post(philo->s_ph);
 	philo_do(philo);
+    sem_wait(philo->s_ph);
+	philo->finished = 1;
+	sem_post(philo->s_ph);
+	usleep(1000);
+	
+	sem_close(philo->forks);
+	sem_close(philo->s_dead);
+	sem_close(philo->ph_write);
+	sem_unlink("forks");
+	sem_unlink("s_dead");
+	sem_unlink("ph_write");
 	sem_close(philo->s_ph);
 	sem_unlink("s_ph");
 	exit(EXIT_SUCCESS);

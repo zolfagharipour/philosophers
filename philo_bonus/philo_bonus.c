@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 18:35:59 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/15 18:18:11 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/16 17:17:23 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static int	semaphors_open(t_philo *philo)
 	philo->forks = sem_open("forks", O_CREAT, 0644, philo->nbr_philo);
 	if (philo->forks == SEM_FAILED)
 		return (0);
-	philo->s_dead = sem_open("s_dead", O_CREAT, 644, 0);
+	philo->s_dead = sem_open("s_dead", O_CREAT, 644, philo->nbr_philo);
 	if (philo->s_dead == SEM_FAILED)
 	{
 		sem_close(philo->forks);
@@ -91,6 +91,7 @@ static int	philo_init(int ac, char **av, t_philo *philo)
 		philo->must_eat = ft_atoi(av[5]);
 	else
 		philo->must_eat = -1;
+	philo->finished = 0;
 	return (1);
 }
 
