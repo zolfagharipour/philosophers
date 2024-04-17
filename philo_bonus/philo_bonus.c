@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 18:35:59 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/16 17:17:23 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/17 13:04:02 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	error_print(int i)
 	else if (i == 4)
 		write(2, "Time to sleep is not correct.\n", 31);
 	else if (i == 5)
-		write(2, "number of times each philo must eat is not correct.\n", 59);
+		write(2, "number of times each philo must eat is not correct.\n", 53);
 	else if (i == TOO_FEW)
 		write(2, "Too few arguments.\n", 20);
 	else if (i == TOO_MANY)

@@ -6,7 +6,7 @@
 /*   By: mzolfagh <mzolfagh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 18:38:28 by mzolfagh          #+#    #+#             */
-/*   Updated: 2024/04/16 16:58:01 by mzolfagh         ###   ########.fr       */
+/*   Updated: 2024/04/17 13:11:37 by mzolfagh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void		philo_action(t_philo *philo);
 long int	current_time(void);
 void		ft_msleep(long int usec, t_philo *philo);
 int			massacre_children(t_philo *philo);
-void		*monitor(void *arg);
-
+void		check_dead(t_philo *philo);
 
 #endif

@@ -5,7 +5,6 @@ SRCS =  ft_atoi.c \
 		philo_action_bonus.c \
 		forking_bonus.c \
 		philo_bonus.c \
-		monitor_bonus.c \
 		utils_bonus.c
 
 
