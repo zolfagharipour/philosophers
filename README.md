@@ -18,7 +18,7 @@ Philosophers are arranged around a table with one fork between each pair. To eat
 
 ## Requirements
 
-Your program should take the following arguments:
+This program should take the following arguments:
 ```
 number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
 ```
