@@ -32,7 +32,7 @@ number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_ea
 
 To compile the philosophers program, clone the repository and run make:
 ```
-git clone https://github.com/yourusername/philosophers.git
+git clone https://github.com/zolfagharipour/philosophers.git
 cd philosophers
 make
 ```
